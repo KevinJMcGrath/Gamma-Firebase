@@ -1,5 +1,5 @@
 # firebase
-/functions
+/functions/node_modules
 .firebaserc
 
 # git
