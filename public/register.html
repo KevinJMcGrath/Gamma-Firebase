@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Register Email Address</title>
+
+
+	<script src="https://www.gstatic.com/firebasejs/4.6.1/firebase.js"></script>
+	<script>
+	  // Initialize Firebase
+	  var config = {
+	    apiKey: "AIzaSyBoMVd2rFIOx3QZ1MoLlpFAxtr35bny_Yw",
+	    authDomain: "symphony-gamma-poc.firebaseapp.com",
+	    databaseURL: "https://symphony-gamma-poc.firebaseio.com",
+	    projectId: "symphony-gamma-poc",
+	    storageBucket: "symphony-gamma-poc.appspot.com",
+	    messagingSenderId: "590686665331"
+	  };
+	  firebase.initializeApp(config);
+	</script>
+	<script src="https://unpkg.com/vue"></script>
+</head>
+<body>
+	<h1>Testing Vue.js</h1>
+	<div id="testDiv">
+		<ol>
+			<li v-for="item in items">
+				{{ item.datum }}
+			</li>
+		</ol>
+	</div>
+</body>
+</html>
