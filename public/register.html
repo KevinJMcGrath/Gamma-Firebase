@@ -18,15 +18,88 @@
 	  firebase.initializeApp(config);
 	</script>
 	<script src="https://unpkg.com/vue"></script>
+
+	<!--Element-UI-->
+	<!-- import CSS -->
+	<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+	<!-- import JavaScript -->
+	<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
+	<style>
+		.box-card {
+			width: 600px;
+			height: 300px;
+		}
+
+		.demo-input-label {
+		    display: inline-block;
+		    width: 100px;
+		  }
+
+		.clearfix:before,
+		.clearfix:after {
+			display: table;
+			content: "";
+		}
+		.clearfix:after {
+			clear: both
+		}
+
+		.inputRow .el-input {
+			width: 230px;
+			margin-top: 20px;
+		}
+
+		.headerBanner {
+			width: 100%;
+			height: 50px;
+			margin-bottom: 25px;
+			background: url("images/symphony-logo.png") no-repeat top left;
+			background-size: auto 30px;
+		}
+	</style>
+	
 </head>
 <body>
-	<h1>Testing Vue.js</h1>
+	<el-container>
+	<el-header>
+		<div class="headerBanner"></div>
+	</el-header>
+
+	<el-main>
 	<div id="testDiv">
-		<ol>
-			<li v-for="item in items">
-				{{ item.datum }}
-			</li>
-		</ol>
+		<el-row type="flex" class="row-bg" justify="center">
+			<el-col :span="16" :offset="4">
+				<el-card class="box-card">
+					<div slot="header">
+						<span>Verify Email Address</span>
+					</div>
+					<div class="inputRow">
+						<span class="demo-input-label">Email Address:</span>
+						<el-input v-model="verifyemail"></el-input>
+					</div>
+					<div style="margin-top: 10px; float:right;">
+						<el-button type="primary">Submit</el-button>
+					</div>
+
+					<!--
+					<ol>
+						<li v-for="item in items">
+							{{ item.datum }}
+						</li>
+					</ol>
+
+					<h4>{{ fftest }}</h4>
+					-->
+				</el-card>
+			</el-col>
+		</el-row>		
 	</div>
+	</el-main>
+	</el-container>
 </body>
+
+<!-- When I had this script statement in the header, it worked in Chrome but not in FF. Moving it down here worked in FF -->
+<script src="js/register-vue.js"></script>
+
 </html>
