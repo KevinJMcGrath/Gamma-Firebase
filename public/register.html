@@ -24,6 +24,8 @@
 	<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
 	<!-- import JavaScript -->
 	<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+	<!-- Axios for HTTP requests -->
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
 	<style>
 		.box-card {
@@ -45,6 +47,11 @@
 			clear: both
 		}
 
+		.inputRow {
+			width: 450px;
+			margin: auto;
+		}
+
 		.inputRow .el-input {
 			width: 230px;
 			margin-top: 20px;
@@ -57,6 +64,17 @@
 			background: url("images/symphony-logo.png") no-repeat top left;
 			background-size: auto 30px;
 		}
+
+		.cardHeaderLabel {
+			font-weight: bold; 
+			font-size: 1.3em;
+		}
+
+		.disclaimer {
+			margin-top: 30px;
+			color: gray;
+			font-size: 0.9em;
+		}
 	</style>
 	
 </head>
@@ -67,39 +85,54 @@
 	</el-header>
 
 	<el-main>
-	<div id="testDiv">
+	<div id="vueContainerDiv">
 		<el-row type="flex" class="row-bg" justify="center">
 			<el-col :span="16" :offset="4">
-				<el-card class="box-card">
+
+				<!--<transition name="el-fade-in-linear">-->
+				<el-card class="box-card" v-show="!thankyou">
 					<div slot="header">
-						<span>Verify Email Address</span>
+						<div class="cardHeaderLabel">Verify Email Address</div>
 					</div>
+
+					<p style="text-align: center;">Please verify your email address before continuing.</p>
+
 					<div class="inputRow">
 						<span class="demo-input-label">Email Address:</span>
-						<el-input v-model="verifyemail"></el-input>
+						<el-input v-model="verifyemail" name="email"></el-input>
+						<el-button type="primary" @click="onClickSubmit">Submit</el-button>
 					</div>
-					<div style="margin-top: 10px; float:right;">
-						<el-button type="primary">Submit</el-button>
+					<div class="disclaimer">
+						<p><b>Note: </b>Symphony does not allow the use of freemail domains to register for our service.</p>
 					</div>
 
-					<!--
-					<ol>
-						<li v-for="item in items">
-							{{ item.datum }}
-						</li>
-					</ol>
-
-					<h4>{{ fftest }}</h4>
-					-->
 				</el-card>
+				<!--</transition>-->
+
+				<!--The transitions are awkward. Need to play with them more-->
+				<!--<transition name="el-fade-in-linear">-->
+				<el-card class="box-card" v-show="thankyou">
+					<div slot="header">
+						<div class="cardHeaderLabel">Thank You</div>
+					</div>
+
+					<p style="margin:30px 20px; text-align: center;">
+						An email has been dispatched to the provided address with additional instrcutions. Be sure to check your spam filters. 
+					</p>
+				</el-card>
+				<!--</transition>-->
+				<el-button @click="thankyou = !thankyou">Transition</el-button>
 			</el-col>
 		</el-row>		
 	</div>
+
 	</el-main>
 	</el-container>
 </body>
 
 <!-- When I had this script statement in the header, it worked in Chrome but not in FF. Moving it down here worked in FF -->
 <script src="js/register-vue.js"></script>
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>-->
+<!--<script src="js/register-main.js"></script>-->
 
 </html>

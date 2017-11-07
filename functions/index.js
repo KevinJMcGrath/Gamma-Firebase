@@ -26,6 +26,8 @@ function getEmailVerificationSalesforce(verificationString)
 {
 	var ep = 'https://dev-symphonyinc.cs4.force.com/services/apexrest/symphony/gamma/265645cc5eac48b7a5bb79ac8f9b3593';
 
+	//The API key below is stored in functions.config() as shown here:
+	//https://firebase.google.com/docs/functions/config-env?authuser=1
 	return rp({
 		uri: ep,
 		qs: {
@@ -39,6 +41,9 @@ function getEmailVerificationSalesforce(verificationString)
 
 exports.sendEmailVerification = functions.https.onRequest((req, res) => {
 
+	//Adding CORS Middleware to make sure the preflight OPTIONS request passes
+	//Because the Cloud Functions use a direct URL which will not match the register page
+	//the preflight will fail without it.
 	var corsFN = cors();
 
 	corsFN(req, res, function() { 
@@ -55,17 +60,25 @@ exports.sendEmailVerification = functions.https.onRequest((req, res) => {
 });
 
 exports.verifyEmail = functions.https.onRequest((req, res) => { 
-	var verifyString = req.query.ver;
-	console.log('Verification String: ' + verifyString);
 
-	getEmailVerificationSalesforce(verifyString).then(function(resp) {
-		console.log('Success: ' + resp.success);
-		console.log('Email: ' + resp.email);
-		console.log('Verified On: ' + resp.verified_on);
-	}).catch(error => {
-		console.error(error);
-		res.status(500).send('Verification failed for some reason.');
-	});
+	var corsFN = cors();
+
+	corsFN(req, res, function() { 
+
+		var verifyString = req.query.ver;
+		console.log('Verification String: ' + verifyString);
+
+		getEmailVerificationSalesforce(verifyString).then(function(resp) {
+			console.log('Success: ' + resp.success);
+			console.log('Email: ' + resp.email);
+			console.log('Verified On: ' + resp.verified_on);
+			//Don't forget this piece. If you don't end the stream, apparently Axios keeps resending
+			res.end();
+		}).catch(error => {
+			console.error(error);
+			res.status(500).send('Verification failed for some reason.');
+		});
+	});	
 });
 
 exports.addMessage = functions.https.onRequest((req, res) => { 

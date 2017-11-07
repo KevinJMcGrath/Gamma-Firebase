@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Signup</title>
+
+
+	<script src="https://www.gstatic.com/firebasejs/4.6.1/firebase.js"></script>
+	<script>
+	  // Initialize Firebase
+	  var config = {
+	    apiKey: "AIzaSyBoMVd2rFIOx3QZ1MoLlpFAxtr35bny_Yw",
+	    authDomain: "symphony-gamma-poc.firebaseapp.com",
+	    databaseURL: "https://symphony-gamma-poc.firebaseio.com",
+	    projectId: "symphony-gamma-poc",
+	    storageBucket: "symphony-gamma-poc.appspot.com",
+	    messagingSenderId: "590686665331"
+	  };
+	  firebase.initializeApp(config);
+	</script>
+	<script src="https://unpkg.com/vue/dist/vue.js"></script>
+	<script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+
+	<!--Element-UI-->
+	<!-- import CSS -->
+	<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+	<!-- import JavaScript -->
+	<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+	<!-- Axios for HTTP requests -->
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<!-- Stripe API -->
+	<script src="https://js.stripe.com/v3/"></script>    
+
+	<style>
+		.box-card-checking {
+			width: 600px;
+			height: 200px;
+		}
+
+		.box-card-signup {
+			width: 840px;
+			height: 600px;
+		}
+
+		.headerBanner {
+			width: 100%;
+			height: 50px;
+			margin-bottom: 25px;
+			background: url("images/symphony-logo.png") no-repeat top left;
+			background-size: auto 30px;
+		}
+
+		.cardHeaderLabel {
+			font-weight: bold; 
+			font-size: 1.3em;
+		}
+
+		.disclaimer {
+			margin-top: 30px;
+			color: gray;
+			font-size: 0.9em;
+		}
+
+		.cardRow {
+			height: 50px;
+			width: 100%;
+			margin-top: 10px;
+		}
+
+		.cardRow p {
+			float: left;
+			margin: 30px 20px;
+		}
+
+		.spinner {
+			float: left;
+			height: 75px;
+			width: 75px;
+
+		}
+
+		.row-signup {
+			width: 80%;
+		}
+
+		.row-signup p {
+			text-align: right;
+			margin-right: 25px;
+			font-weight: bold;
+		}
+
+		.row-signup p > span {
+			color: firebrick;
+		}
+
+		.el-row {
+			margin-bottom: 10px;
+		}
+
+		.singleButton {
+			width: 200px;
+		}
+
+	</style>
+</head>
+<body>
+	<el-container>
+		<el-header>
+			<div class="headerBanner"></div>
+		</el-header>
+
+		<div id="verifyApp">
+		<el-row type="flex">
+			<el-col :span="24">
+				<div style="height:50px;width:100%"></div>
+			</el-col>
+		</el-row>
+		<el-row type="flex" class="row-bg" justify="center">
+			<el-col :span="12">
+
+				<el-card class="box-card-checking" v-show="!confirmed">
+					<div slot="header">
+						<div class="cardHeaderLabel">Confirming Verification</div>
+					</div>
+
+					<div class="cardRow">
+						
+						<div class="spinner">
+							<img src="images/double-ring-spinner.gif" height="75px" width="75px" />
+						</div>
+
+						<p>Checking email verification. One moment...</p>
+					</div>
+				</el-card>
+
+				<el-card class="box-card-signup" v-show="confirmed">
+					<div slot="header">
+						<el-steps :active="signupStep" finish-status="success" simple style="margin-top:10px;">
+							<el-step title="Your Info"></el-step>
+							<el-step title="Billing Info"></el-step>
+							<el-step title="Subscription"></el-step>
+						</el-steps>
+					</div>
+
+					<div id="signup-0" v-show="signupStep == 0">
+						<el-row class="row-signup">
+							<el-col :span="6"><p>Email:</p></el-col>
+							<el-col :span="18"><el-input v-model="signup_data.email" disabled></el-input></el-col>
+						</el-row>
+						<el-row class="row-signup">
+							<el-col :span="6"><p>First Name:<span>*</span></p></el-col>
+							<el-col :span="18"><el-input v-model="signup_data.firstanme"></el-input></el-col>
+						</el-row>
+						<el-row class="row-signup">
+							<el-col :span="6"><p>Last Name:<span>*</span></p></el-col>
+							<el-col :span="18"><el-input v-model="signup_data.lastanme"></el-input></el-col>
+						</el-row>						
+						<el-row class="row-signup">
+							<el-col :span="6"><p>Company Name:<span>*</span></p></el-col>
+							<el-col :span="18"><el-input v-model="signup_data.company"></el-input></el-col>
+						</el-row>
+						<el-row class="row-signup">
+							<el-col :span="6"><p>Region:<span>*</span></p></el-col>
+							<el-col :span="18"><el-input v-model="signup_data.region"></el-input></el-col>
+						</el-row>
+						<el-row class="row-signup">
+							<el-col :span="6"><p>Domain:<span>*</span></p></el-col>
+							<el-col :span="12">
+								<el-input v-model="signup_data.subdomain">
+									<template slot="append">.symphony.com</template>
+								</el-input>
+							</el-col>
+							<el-col :span="5" :offset="1">
+								<el-button type="primary" :loading="false">Check Avail.</el-button>
+							</el-col>
+						</el-row>						
+						
+						<el-row class="row-signup">
+							<el-col :span="18" :offset="6"><el-button class="singleButton" type="primary" @click="nextStep">Next</el-button></el-col>
+						</el-row>
+					</div>				
+
+					<div id="signup-1" v-show="signupStep == 1">						
+
+						<el-row class="row-signup">
+							<el-col :span="6"><p>Address Line 1:<span>*</span></p></el-col>
+							<el-col :span="18"><el-input v-model="signup_data.billing.street1"></el-input></el-col>
+						</el-row>
+						<el-row class="row-signup">
+							<el-col :span="6"><p>Address Line 2:<span>*</span></p></el-col>
+							<el-col :span="18"><el-input v-model="signup_data.billing.street2"></el-input></el-col>
+						</el-row>
+						<el-row class="row-signup">
+							<el-col :span="6"><p>City:<span>*</span></p></el-col>
+							<el-col :span="18"><el-input v-model="signup_data.billing.city"></el-input></el-col>
+						</el-row>
+						<el-row class="row-signup">
+							<el-col :span="6"><p>State/Province:<span>*</span></p></el-col>
+							<el-col :span="18"><el-input v-model="signup_data.billing.state"></el-input></el-col>
+						</el-row>
+						<el-row class="row-signup">
+							<el-col :span="6"><p>Postal Code:<span>*</span></p></el-col>
+							<el-col :span="18"><el-input v-model="signup_data.billing.zip"></el-input></el-col>
+						</el-row>
+						<el-row class="row-signup">
+							<el-col :span="6"><p>Country:<span>*</span></p></el-col>
+							<el-col :span="18"><el-input v-model="signup_data.billing.country"></el-input></el-col>
+						</el-row>
+
+						<el-row class="row-signup">							
+							<el-col :span="18" :offset="6">
+								<el-button-group>
+									<el-button type="primary" icon="el-icon-arrow-left" @click="prevStep">Back</el-button>
+									<el-button type="primary" icon="el-icon-arrow-right" @click="nextStep">Next</el-button>
+								</el-button-group>
+								
+							</el-col>
+						</el-row>
+					</div>
+
+					<div id="signup-2" v-show="signupStep == 2">
+
+						<el-row class="row-signup">
+							<el-col :span="6"><p>Seats:<span>*</span></p></el-col>
+							<el-col :span="6">
+								<template>
+									<el-input-number v-model="signup_data.seats" controls-position="right" @change="handleChange" :min="10" :max="200"></el-input-number>
+								</template>
+							</el-col>
+						</el-row>
+						
+						<el-row class="row-signup">
+							<el-col :span="6"><p>Credit Card:<span>*</span></p></el-col>
+							<el-col :span="18" >								
+								<div style="width:400px;height:30px;margin-top:15px;">
+						            <div id="card-element" class="field"></div>
+						        </div> 
+							</el-col>							
+						</el-row>
+
+						<el-row class="row-signup">
+							<el-col :span="8"><p>Annual Subscription:</p></el-col>
+							<el-col :span="4"><p>{{ signup_data.price }}</p></el-col>
+						</el-row>
+
+
+						<el-row class="row-signup">
+							<el-col :span="18" :offset="6">								
+								<el-checkbox v-model="signup_data.eula" border>I agree to the terms and conditions</el-checkbox>
+							</el-col>							
+						</el-row>
+						
+						<el-row class="row-signup">							
+							<el-col :span="18" :offset="6">
+								<el-button-group>
+									<el-button type="primary" >Sign Up</el-button>
+								</el-button-group>
+								
+							</el-col>
+						</el-row>
+					
+					</div>
+				</el-card>
+
+
+			</el-col>
+		</el-row>
+		</div>
+
+	</el-container>
+	
+</body>
+
+<script src="js/signup-vue.js"></script>
+
+</html>
